@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local/editor files
+.DS_Store
+*~
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Slurm and submission runtime output
+slurm-*.out
+OUT_DIR/
+ERR_DIR/
+slurm_cache_*/
+history_submission
+
+# Generated command batches from file_batch_splitter.py
+group_*.txt
+batch_*.txt
+
+# Temporary logs and scratch files
+*.log
+*.tmp
+*.bak
