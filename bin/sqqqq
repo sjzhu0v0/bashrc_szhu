@@ -1,0 +1,1 @@
+while [ 1 ];do squeue -u tcheng ; sleep 60 ; clear ;clear ; done

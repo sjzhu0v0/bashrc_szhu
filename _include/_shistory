@@ -1,0 +1,91 @@
+shistory() {
+    local job_name="$1"
+    local history_file="${SZHU_SUBMIT_DIR:-/lustre/alice/users/tcheng/szhu/work/sys}/history_submission"
+    local run_id
+
+    if [[ -z "$job_name" ]]; then
+        echo "usage: shistory <job_name>"
+        return 1
+    fi
+
+    if [[ ! -f "$history_file" ]]; then
+        echo "history file not found: $history_file"
+        return 1
+    fi
+
+    run_id=$(
+        grep -A 1 -- "$job_name" "$history_file" 2>/dev/null \
+        | tail -n 1 \
+        | grep -oE '[0-9]+' \
+        | head -n 1
+    )
+
+    if [[ -z "$run_id" ]]; then
+        echo "no such job"
+        return 1
+    fi
+
+    sacct -j "$run_id"
+}
+
+_shistory() {
+    local cur opts history_file
+    local -a job_names
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    opts="-h --help"
+
+    history_file="${SZHU_SUBMIT_DIR:-/lustre/alice/users/tcheng/szhu/work/sys}/history_submission"
+
+    # 保持 COMPREPLY 的原始顺序，不按字典序重新排序
+    compopt -o nosort 2>/dev/null
+
+    if [[ "$cur" == -* ]]; then
+        COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+        return 0
+    fi
+
+    if [[ -f "$history_file" ]]; then
+        mapfile -t job_names < <(
+            grep -oE -- '-n [^ ]+' "$history_file" 2>/dev/null \
+            | sed 's/^-n //' \
+            | tac \
+            | awk '!seen[$0]++'
+        )
+
+        COMPREPLY=($(compgen -W "${job_names[*]}" -- "$cur"))
+    fi
+
+    return 0
+}
+
+swhich() {
+    local job_name="$1"
+    local history_file="${SZHU_SUBMIT_DIR:-/lustre/alice/users/tcheng/szhu/work/sys}/history_submission"
+
+    if [[ -z "$job_name" ]]; then
+        echo "usage: swhich <job_name>"
+        return 1
+    fi
+
+    if [[ ! -f "$history_file" ]]; then
+        echo "history file not found: $history_file"
+        return 1
+    fi
+    
+    local path_job
+    path_job=$(
+        grep "$job_name" "$history_file" 2>/dev/null | tail -n 1
+    )
+
+    if [[ -z "$path_job" ]]; then
+        echo "no such job"
+        return 1
+    fi
+  
+    echo $path_job
+}
+
+complete -F _shistory shistory
+complete -F _shistory swhich

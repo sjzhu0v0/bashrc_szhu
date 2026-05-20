@@ -1,0 +1,68 @@
+# =========================
+# mecho function
+# =========================
+mecho() {
+    local mode=$1
+    shift
+    local text="$*"
+
+    # Color definitions
+    local RED="\e[91m"
+    local GREEN="\e[92m"
+    local YELLOW="\e[93m"
+    local BLUE="\e[94m"
+    local CYAN="\e[96m"
+    local LIGHT_GRAY="\e[37m"
+    local GRAY="\e[90m"
+    local NC="\e[0m"  # reset
+
+    case "$mode" in
+        success)
+            echo -e "${GREEN}${text}${NC}"
+            ;;
+        warning)
+            echo -e "${YELLOW}${text}${NC}"
+            ;;
+        error)
+            echo -e "${RED}${text}${NC}"
+            ;;
+        info)
+            echo -e "${CYAN}${text}${NC}"
+            ;;
+        notice)
+            echo -e "${BLUE}${text}${NC}"
+            ;;
+        debug)
+            echo -e "${LIGHT_GRAY}${text}${NC}"
+            ;;
+        trace)
+            echo -e "${GRAY}${text}${NC}"
+            ;;
+        *)
+            echo -e "${RED}[ERROR] Unknown mode: '${mode}'${NC}" >&2
+            echo "Available modes:" >&2
+            echo "  success, warning, error, info, notice, debug, trace" >&2
+            return 1
+            ;;
+    esac
+}
+
+# =========================
+# bash completion for mecho
+# =========================
+_mecho_completion() {
+    local cur
+    local modes
+
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    modes=(success warning error info notice debug trace)
+
+    # 只补全第一个参数
+    if [[ $COMP_CWORD -eq 1 ]]; then
+        COMPREPLY=($(compgen -W "${modes[*]}" -- "$cur"))
+    else
+        COMPREPLY=()
+    fi
+}
+
+complete -F _mecho_completion mecho

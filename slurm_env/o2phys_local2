@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#SBATCH --job-name=Download_LHC22
+#SBATCH --partition=main
+#SBATCH --output=OUT_DIR/%a
+#SBATCH --error=ERR_DIR/%a
+#SBATCH --mem=8G
+
+
+index=${SLURM_ARRAY_TASK_ID}
+echo $index
+command=`sed -n ${index}'p' ${1}`
+
+singularity shell -B /scratch/alice/tcheng/alice_szhu:/alice -B /lustre  /lustre/alice/users/szhu/container/alice.sif << eof
+alienv enter O2Physics/latest << Eof
+unset no_proxy ftp_proxy https_proxy FTP_PROXY RSYNC_PROXY HTTPS_PROXY HTTP_PROXY http_proxy rsync_proxy
+export JALIEN_TOKEN_CERT=/lustre/alice/users/tcheng/szhu/share/cert/tokencert_$UID.pem
+export JALIEN_TOKEN_KEY=/lustre/alice/users/tcheng/szhu/share/cert/tokenkey_$UID.pem
+export alien_CLOSE_SE=ALICE::CERN::OCDB
+${command}
+Eof
+eof

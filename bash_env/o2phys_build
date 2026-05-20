@@ -1,0 +1,1 @@
+srun --pty --partition=work --mem=180G --job-name="scratch-build-session" -t 02:30:00 singularity shell -B /scratch/alice/tcheng/alice_szhu:/alice -B /lustre  /lustre/alice/users/szhu/container/alice.sif

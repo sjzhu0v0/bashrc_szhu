@@ -1,0 +1,7 @@
+source ~/.bashrc_szhu
+export PATH=${PATH}:${SZHU_ANALYSIS_FRAMEWORK}/kit
+unset no_proxy ftp_proxy https_proxy FTP_PROXY RSYNC_PROXY HTTPS_PROXY HTTP_PROXY http_proxy rsync_proxy
+export JALIEN_TOKEN_CERT=${SZHU_CERT_DIR}/tokencert_$UID.pem
+export JALIEN_TOKEN_KEY=${SZHU_CERT_DIR}/tokenkey_$UID.pem
+export alien_CLOSE_SE=ALICE::CERN::OCDB
+alias ls='ls --color=auto'

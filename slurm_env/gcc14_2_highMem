@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#SBATCH --job-name=Download_LHC22
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=8G
+#SBATCH --partition=main
+#SBATCH --output=OUT_DIR/%a
+#SBATCH --error=ERR_DIR/%a
+
+index=${SLURM_ARRAY_TASK_ID}
+echo $index
+command=`sed -n ${index}'p' ${1}`
+
+singularity shell -B /cvmfs -B /lustre /cvmfs/alice.cern.ch/containers/fs/singularity/x86_64/alma9-alice-20250311 << eof
+source /lustre/alice/users/szhu/share/bin/init_lcg_el9_34
+${command}
+eof

@@ -1,0 +1,15 @@
+source ~/.bashrc_szhu
+PS1='\[\e]0;CernSft: \w\a\]${debian_chroot:+($debian_chroot)}CernSft$ '
+#PROMPT_COMMAND='echo && echo -e "\e[91m`date`\e[0m" && echo -e "\e[93m"`pwd`"\e[0m"'
+alias ls='ls --color=auto'
+export LD_LIBRARY_PATH=${SZHU_SHARE_LIB}:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${SZHU_OPT_LIB64}:${LD_LIBRARY_PATH}
+export LD_INCLUDE_PATH=${SZHU_OPT_INCLUDE}:${LD_INCLUDE_PATH}
+source /cvmfs/sft.cern.ch/lcg/releases/gcc/14.2.0/x86_64-el9/setup.sh
+source /cvmfs/sft.cern.ch/lcg/views/LCG_107/x86_64-el9-gcc14-opt/setup.sh
+PS1="\[\e]0;\h sft \a\]\[\e[0;32m\]sft\[\e[0m\] \[\033[01;34m\]\w\[\033[00m\] | "
+export PATH=${PATH}:${SZHU_ANALYSIS_FRAMEWORK}/kit
+export NODE_PATH=${SZHU_NODE_MODULES}:$NODE_PATH
+export ROOT_INCLUDE_PATH=${ROOT_INCLUDE_PATH}:${SZHU_ANALYSIS_FRAMEWORK}/include
+source /cvmfs/sft.cern.ch/lcg/releases/ROOT/6.36.02-c35af/x86_64-el9-gcc14-opt/bin/thisroot.sh
+

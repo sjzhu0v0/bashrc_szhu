@@ -1,0 +1,2 @@
+#salloc -A alice -c 4 --mem-per-cpu=16G --partition=long --reservation="cluster_test" -t 24:00:00 singularity shell -B /scratch/alice/szhu/alice:/alice -B /lustre /lustre/alice/users/szhu/container/alice.sif
+salloc -A alice -c 4 --mem-per-cpu=16G --partition=long -t 24:00:00 singularity shell -B /scratch/alice/szhu/alice:/alice -B /lustre /lustre/alice/users/szhu/container/alice.sif

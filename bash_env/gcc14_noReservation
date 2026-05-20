@@ -1,0 +1,1 @@
+singularity shell -B /cvmfs -B /lustre /cvmfs/alice.cern.ch/containers/fs/singularity/x86_64/alma9-alice-20250311

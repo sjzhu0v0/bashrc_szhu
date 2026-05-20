@@ -1,0 +1,1 @@
+srun --pty --partition=work --mem=16G -t 02:30:00 singularity shell -B /scratch/alice/tcheng/alice_szhu:/alice -B /lustre  /lustre/alice/users/szhu/container/alice.sif

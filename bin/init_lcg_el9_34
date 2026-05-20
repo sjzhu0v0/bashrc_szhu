@@ -1,0 +1,62 @@
+source ~/.bashrc_szhu   
+PS1='\[\e]0;CernSft: \w\a\]${debian_chroot:+($debian_chroot)}CernSft$ '
+#PROMPT_COMMAND='echo && echo -e "\e[91m`date`\e[0m" && echo -e "\e[93m"`pwd`"\e[0m"'
+alias ls='ls --color=auto'
+export LD_LIBRARY_PATH=${SZHU_SHARE_LIB}:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${SZHU_OPT_LIB64}:${LD_LIBRARY_PATH}
+export LD_INCLUDE_PATH=${SZHU_OPT_INCLUDE}:${LD_INCLUDE_PATH}
+source /cvmfs/sft.cern.ch/lcg/releases/gcc/14.2.0/x86_64-el9/setup.sh
+source /cvmfs/sft.cern.ch/lcg/views/LCG_107/x86_64-el9-gcc14-opt/setup.sh
+PS1="\[\e]0;\h sft \a\]\[\e[0;32m\]sft\[\e[0m\] \[\033[01;34m\]\w\[\033[00m\] | "
+export PATH=${PATH}:${SZHU_ANALYSIS_FRAMEWORK}/kit
+export NODE_PATH=${SZHU_NODE_MODULES}:$NODE_PATH
+export ROOT_INCLUDE_PATH=${ROOT_INCLUDE_PATH}:${SZHU_ANALYSIS_FRAMEWORK}/include
+
+
+# High-contrast colored echo for black background
+mecho() {
+    local mode=$1
+    shift
+    local text="$*"
+
+    # Color definitions
+    local RED="\e[91m"
+    local GREEN="\e[92m"
+    local YELLOW="\e[93m"
+    local BLUE="\e[94m"
+    local CYAN="\e[96m"
+    local LIGHT_GRAY="\e[37m"
+    local GRAY="\e[90m"
+    local NC="\e[0m"  # reset
+
+    case "$mode" in
+        success)
+            echo -e "${GREEN}${text}${NC}"
+            ;;
+        warning)
+            echo -e "${YELLOW}${text}${NC}"
+            ;;
+        error)
+            echo -e "${RED}${text}${NC}"
+            ;;
+        info)
+            echo -e "${CYAN}${text}${NC}"
+            ;;
+        notice)
+            echo -e "${BLUE}${text}${NC}"
+            ;;
+        debug)
+            echo -e "${LIGHT_GRAY}${text}${NC}"
+            ;;
+        trace)
+            echo -e "${GRAY}${text}${NC}"
+            ;;
+        *)
+            # Unknown mode handling
+            echo -e "${RED}[ERROR] Unknown mode: '${mode}'${NC}" >&2
+            echo "Available modes:" >&2
+            echo "  success, warning, error, info, notice, debug, trace" >&2
+            return 1
+            ;;
+    esac
+}

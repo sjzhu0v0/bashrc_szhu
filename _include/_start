@@ -1,0 +1,56 @@
+# start command
+# Usage:
+#   start <script-name>
+# Example:
+#   start myenv
+#   start myenv.sh
+
+start() {
+    local dir="${SZHU_BASE}/bash_env"
+    local input="$1"
+    local file
+
+    if [[ -z "$input" ]]; then
+        echo "Usage: start <script-name>"
+        return 1
+    fi
+
+    # 禁止路径穿越或带路径输入
+    if [[ "$input" == */* ]]; then
+        echo "start: only file names under $dir are allowed"
+        return 1
+    fi
+
+    file="$dir/$input"
+
+    # 如果没找到，自动尝试补 .sh
+    if [[ ! -f "$file" && -f "${file}.sh" ]]; then
+        file="${file}.sh"
+    fi
+
+    if [[ ! -f "$file" ]]; then
+        echo "start: '$input' not found in $dir"
+        return 1
+    fi
+
+    # shellcheck disable=SC1090
+    source "$file"
+}
+
+_start_completion() {
+    local dir="${SZHU_BASE}/bash_env"
+    local cur
+
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    # 只在补全第一个参数时生效
+    if [[ $COMP_CWORD -eq 1 ]]; then
+        COMPREPLY=(
+            $(compgen -f "$dir/$cur" 2>/dev/null | xargs -n1 basename 2>/dev/null)
+        )
+    else
+        COMPREPLY=()
+    fi
+}
+
+complete -F _start_completion start

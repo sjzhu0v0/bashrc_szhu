@@ -1,0 +1,46 @@
+conda deactivate
+
+#!/bin/bash
+
+echo "=============================="
+echo -e "\e[31m   System Information\e[0m"
+echo "=============================="
+
+cpu_idle=$(top -bn1 | grep "Cpu(s)" | awk '{print $8}' | cut -d. -f1)
+cpu_usage=$((100 - cpu_idle))
+echo "CPU Usage        : ${cpu_usage}%"
+
+mem_total=$(free -m | awk '/Mem:/ {print $2}')
+mem_used=$(free -m | awk '/Mem:/ {print $3}')
+mem_usage=$((mem_used * 100 / mem_total))
+echo "Memory Usage     : ${mem_used}MB / ${mem_total}MB (${mem_usage}%)"
+
+top_cpu_user=$(ps -eo user,%cpu --sort=-%cpu | awk 'NR==2 {print $1, $2"%"}')
+echo "Top CPU User     : ${top_cpu_user}"
+
+top_mem_user=$(ps -eo user,%mem --sort=-%mem | awk 'NR==2 {print $1, $2"%"}')
+echo "Top Memory User  : ${top_mem_user}"
+
+echo "Load Average     : $(uptime | awk -F'load average:' '{print $2}')"
+
+echo "=============================="
+# =========================
+# Base path definitions
+# =========================
+export SZHU_BASE="/u/tcheng/.bashrc_szhu.d"
+export SZHU_SUBMIT_DIR="/lustre/alice/users/tcheng/szhu/submit"
+export SZHU_CERT_DIR="/lustre/alice/users/tcheng/szhu/share/cert"
+export SZHU_ANALYSIS_FRAMEWORK="/lustre/alice/users/tcheng/szhu/packages/AnalysisFramework"
+export SZHU_QA_DIR="/lustre/alice/users/tcheng/szhu/packages/QA"
+export SZHU_SHARE_LIB="/lustre/alice/users/szhu/share/lib"
+export SZHU_OPT_LIB64="/lustre/alice/users/szhu/opt/lib64"
+export SZHU_OPT_INCLUDE="/lustre/alice/users/szhu/opt/include"
+export SZHU_NODE_MODULES="/u/szhu/node_modules"
+
+if compgen -G "${SZHU_BASE}/_include/*" > /dev/null; then
+    for f in ${SZHU_BASE}/_include/*; do
+        [[ -f "$f" ]] && source "$f"
+    done
+fi
+
+export PATH=${SZHU_BASE}/bin:${PATH}

@@ -1,0 +1,3 @@
+VERSION=${1:-"VO_ALICE@O2Physics::daily-20260311-0000-1"}
+source /cvmfs/alice.cern.ch/etc/login.sh
+alienv enter  ${VERSION}

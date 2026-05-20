@@ -1,0 +1,2 @@
+cd ${SZHU_ANALYSIS_FRAMEWORK}; git pull
+cd ${SZHU_QA_DIR}; git pull
