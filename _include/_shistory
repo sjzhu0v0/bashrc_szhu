@@ -14,10 +14,35 @@ shistory() {
     fi
 
     run_id=$(
-        grep -A 1 -- "$job_name" "$history_file" 2>/dev/null \
-        | tail -n 1 \
-        | grep -oE '[0-9]+' \
-        | head -n 1
+        awk -v job_name="$job_name" '
+            function has_exact_job_name(line, fields, n, i) {
+                n = split(line, fields, /[[:space:]]+/)
+                for (i = 1; i < n; i++) {
+                    if (fields[i] == "-n" && fields[i + 1] == job_name) {
+                        return 1
+                    }
+                }
+                return 0
+            }
+
+            waiting_for_job_id {
+                if (match($0, /Submitted batch job[[:space:]]+[0-9]+/)) {
+                    run_id = substr($0, RSTART, RLENGTH)
+                    sub(/^Submitted batch job[[:space:]]+/, "", run_id)
+                }
+                waiting_for_job_id = 0
+            }
+
+            has_exact_job_name($0) {
+                waiting_for_job_id = 1
+            }
+
+            END {
+                if (run_id != "") {
+                    print run_id
+                }
+            }
+        ' "$history_file" 2>/dev/null
     )
 
     if [[ -z "$run_id" ]]; then
@@ -48,10 +73,17 @@ _shistory() {
 
     if [[ -f "$history_file" ]]; then
         mapfile -t job_names < <(
-            grep -oE -- '-n [^ ]+' "$history_file" 2>/dev/null \
-            | sed 's/^-n //' \
+            awk '
+                {
+                    for (i = 1; i < NF; i++) {
+                        if ($i == "-n") {
+                            print $(i + 1)
+                        }
+                    }
+                }
+            ' "$history_file" 2>/dev/null \
             | tac \
-            | awk '!seen[$0]++'
+            | awk 'NF && !seen[$0]++'
         )
 
         COMPREPLY=($(compgen -W "${job_names[*]}" -- "$cur"))
@@ -73,18 +105,31 @@ swhich() {
         echo "history file not found: $history_file"
         return 1
     fi
-    
+
     local path_job
     path_job=$(
-        grep "$job_name" "$history_file" 2>/dev/null | tail -n 1
+        awk -v job_name="$job_name" '
+            {
+                for (i = 1; i < NF; i++) {
+                    if ($i == "-n" && $(i + 1) == job_name) {
+                        line = $0
+                    }
+                }
+            }
+            END {
+                if (line != "") {
+                    print line
+                }
+            }
+        ' "$history_file" 2>/dev/null
     )
 
     if [[ -z "$path_job" ]]; then
         echo "no such job"
         return 1
     fi
-  
-    echo $path_job
+
+    echo "$path_job"
 }
 
 complete -F _shistory shistory
