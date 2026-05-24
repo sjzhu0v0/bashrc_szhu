@@ -79,16 +79,18 @@ submit o2phys_local commands.txt 20
 
 If `-n` is omitted, the job name is derived from the command file name. Submissions are recorded in `${SZHU_SUBMIT_DIR}/history_submission`.
 
-### `shistory` and `swhich`
+### `shistory`, `swhich`, and `sresubmit`
 
-Look up previous submissions from the submission history.
+Look up previous submissions from the submission history and resubmit saved jobs.
 
 ```bash
 shistory qa_run
 swhich qa_run
+sresubmit qa_run
+sresubmit qa_run -n qa_run_retry -t 04:00:00 -p main
 ```
 
-`shistory` resolves the job ID and calls `sacct`; `swhich` prints the stored submission command.
+`shistory` resolves the job ID and calls `sacct`; `swhich` prints the stored submission command. Both commands match the exact `-n <job_name>` field in the history file. `sresubmit` finds the most recent exact job-name match, rebuilds the original `submit` command, and applies any optional overrides for `-p`, `-n`, `-t`, `-a`, `--dependency`, or positional submit arguments.
 
 ### `unset_proxy`
 
