@@ -90,7 +90,7 @@ sresubmit qa_run
 sresubmit qa_run -n qa_run_retry -t 04:00:00 -p main
 ```
 
-`shistory` resolves the job ID and calls `sacct`; `swhich` prints the stored submission command. Both commands match the exact `-n <job_name>` field in the history file. `sresubmit` finds the most recent exact job-name match, rebuilds the original `submit` command, and applies any optional overrides for `-p`, `-n`, `-t`, `-a`, `--dependency`, or positional submit arguments.
+`shistory` resolves the job ID and calls `sacct`; `swhich` prints the stored submission command. Both commands match the exact `-n <job_name>` field in the history file. `sresubmit` records the resubmit request in the same history file, finds the most recent exact job-name match, rebuilds the original `submit` command, and applies any optional overrides for `-p`, `-n`, `-t`, `-a`, `--dependency`, or positional submit arguments.
 
 ### `unset_proxy`
 

@@ -2,6 +2,18 @@ _shistory_file() {
     echo "${SZHU_SUBMIT_DIR:-/lustre/alice/users/tcheng/szhu/work/sys}/history_submission"
 }
 
+_shistory_log_sresubmit() {
+    local history_file="$1"
+    shift
+
+    {
+        date
+        printf 'sresubmit'
+        printf ' %q' "$@"
+        printf '\n'
+    } >> "$history_file"
+}
+
 _shistory_find_submit_line() {
     local job_name="$1"
     local history_file="$2"
@@ -15,6 +27,10 @@ _shistory_find_submit_line() {
                 }
             }
             return 0
+        }
+
+        $1 == "sresubmit" {
+            next
         }
 
         has_exact_job_name($0) {
@@ -42,6 +58,11 @@ _shistory_find_run_id() {
                 }
             }
             return 0
+        }
+
+        $1 == "sresubmit" {
+            waiting_for_job_id = 0
+            next
         }
 
         waiting_for_job_id {
@@ -184,6 +205,8 @@ sresubmit() {
         echo "no such job"
         return 1
     fi
+
+    _shistory_log_sresubmit "$history_file" "$source_job" "$@"
 
     read -r -a original_args <<< "$original_line"
 
