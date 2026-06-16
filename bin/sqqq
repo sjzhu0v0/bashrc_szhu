@@ -1,1 +1,1 @@
-squeue -u tcheng
+squeue -u ${USER}
